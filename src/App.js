@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import {
-  FileUp, Download, CloudUpload, Check, Code, Settings, Shield, Zap, ArrowRight
+  FileUp, Download, CloudUpload, Check, Settings, Shield, Zap
 } from 'lucide-react';
 import HeroSection from './HeroSection';
+
+const apiurl = 'https://drawio-to-java-production.up.railway.app';
 
 const Stepper = ({ currentStep }) => {
   const steps = [
@@ -102,6 +104,7 @@ const App = () => {
   const [file, setFile] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [convertedFile, setConvertedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
   const mainContentRef = useRef(null);
 
@@ -114,6 +117,7 @@ const App = () => {
   const handleFileSelect = (selectedFile) => {
     if (selectedFile.name.endsWith('.drawio')) {
       setFile(selectedFile);
+      setConvertedFile(null); // Reset previous conversion
       setCurrentStep(1);
     } else {
       alert('Veuillez sélectionner un fichier DrawIO valide');
@@ -121,29 +125,38 @@ const App = () => {
   };
 
   const handleConvert = async () => {
+    setIsLoading(true);
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch('http://localhost:5000/upload', {
-        method: 'POST',
+      const response = await fetch(`${apiurl}/upload`, {
+        method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        setConvertedFile(data);
-        setCurrentStep(2);
+
+        // Simulate the 1-second delay before showing the converted file
+        setTimeout(() => {
+          setConvertedFile(data);
+          setCurrentStep(2);
+          setIsLoading(false);
+        }, 1000);
       } else {
-        alert('Erreur lors de la conversion');
+        alert("Erreur lors de la conversion");
+        setIsLoading(false);
       }
     } catch (err) {
-      alert('Une erreur est survenue');
+      console.error(err);
+      alert("Une erreur est survenue lors de la conversion");
+      setIsLoading(false);
     }
   };
 
   const handleDownload = () => {
-    window.location.href = 'http://localhost:5000/download';
+    window.location.href = `${apiurl}/download`;
   };
 
   const triggerFileInput = () => {
@@ -201,6 +214,13 @@ const App = () => {
                 >
                   Convertir
                 </button>
+              </div>
+            )}
+
+            {isLoading && (
+              <div className="mt-6 text-center text-xl font-medium text-blue-600">
+                <div className="animate-spin h-10 w-10 border-4 border-t-4 border-blue-600 rounded-full mx-auto mb-4"></div>
+                Conversion en cours...
               </div>
             )}
 
