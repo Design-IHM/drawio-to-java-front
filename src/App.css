@@ -1,3 +1,4 @@
+/* Global Styles */
 .App {
   text-align: center;
 }
@@ -34,5 +35,33 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .bg-gray-50 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .bg-white {
+    padding: 2rem;
+  }
+
+  .flex-col {
+    flex-direction: column;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flex {
+    flex-direction: column;
+  }
+
+  .max-w-4xl {
+    max-width: 100%;
   }
 }
