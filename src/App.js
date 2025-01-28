@@ -18,23 +18,20 @@ const Stepper = ({ currentStep }) => {
       <div className="flex justify-between items-center w-full max-w-xl">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center
-                ${index <= currentStep
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-500'
-                } transition-all duration-300`}
-              >
-                {index < currentStep ? <Check /> : index + 1}
-              </div>
-              <span
-                className={`mt-2 text-sm font-medium
-                ${index <= currentStep ? 'text-blue-600' : 'text-gray-500'}`}
-              >
-                {step}
-              </span>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center
+              ${index <= currentStep
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-500'
+              } transition-all duration-300`}
+            >
+              {index < currentStep ? <Check /> : index + 1}
             </div>
+            <span
+              className={`mt-2 text-sm font-medium
+              ${index <= currentStep ? 'text-blue-600' : 'text-gray-500'}`}
+            >
+              {step}
+            </span>
             {index < steps.length - 1 && (
               <div className={`w-16 h-1 mx-4
                 ${index < currentStep ? 'bg-blue-600' : 'bg-gray-200'}`}
@@ -117,7 +114,6 @@ const App = () => {
   const handleFileSelect = (selectedFile) => {
     if (selectedFile.name.endsWith('.drawio')) {
       setFile(selectedFile);
-      setConvertedFile(null); // Reset previous conversion
       setCurrentStep(1);
     } else {
       alert('Veuillez sélectionner un fichier DrawIO valide');
@@ -137,13 +133,12 @@ const App = () => {
 
       if (response.ok) {
         const data = await response.json();
+        setConvertedFile(data);
 
-        // Simulate the 1-second delay before showing the converted file
         setTimeout(() => {
-          setConvertedFile(data);
-          setCurrentStep(2);
+          setCurrentStep(1);
           setIsLoading(false);
-        }, 1000);
+        }, 500);
       } else {
         alert("Erreur lors de la conversion");
         setIsLoading(false);
